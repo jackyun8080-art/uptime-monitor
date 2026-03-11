@@ -12,20 +12,18 @@ import {
     ResponsiveContainer,
 } from "recharts";
 import { TaskConfig, TaskCreateInput, LogEntry } from "@/types";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 // ==================== Helpers ====================
 
 function formatTime(ts: number | null): string {
     if (!ts) return "—";
-    return new Date(ts).toLocaleString("zh-CN", {
-        timeZone: "Asia/Shanghai",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-    });
+    return dayjs(ts).tz("Asia/Shanghai").format("MM-DD HH:mm:ss");
 }
 
 function scheduleLabel(s: string): string {
@@ -235,11 +233,7 @@ function LatencyChart({ taskId }: { taskId: string }) {
 
     const chartData = logs.map((l, i) => ({
         idx: i + 1,
-        time: new Date(l.timestamp).toLocaleTimeString("zh-CN", {
-            hour12: false,
-            hour: "2-digit",
-            minute: "2-digit",
-        }),
+        time: dayjs(l.timestamp).tz("Asia/Shanghai").format("HH:mm"),
         latency: l.responseTime,
         status: l.success ? "up" : "down",
     }));

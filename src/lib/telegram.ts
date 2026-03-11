@@ -4,6 +4,12 @@
 
 import { CronResult } from "@/types";
 import { translateHttpStatus, translateNetworkError } from "./translator";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const TG_API = "https://api.telegram.org";
 
@@ -15,16 +21,7 @@ function getConfig() {
 }
 
 function formatTimestamp(ts: number): string {
-    return new Date(ts).toLocaleString("zh-CN", {
-        timeZone: "Asia/Shanghai",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-    });
+    return dayjs(ts).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss");
 }
 
 function buildMessage(result: CronResult): string {
@@ -51,18 +48,18 @@ function buildMessage(result: CronResult): string {
         }
 
         errorSection = `
-**错误类型**：${errorName}
-**详细说明**：${errorDesc}`;
+*错误类型*：${errorName}
+*详细说明*：${errorDesc}`;
     }
 
-    return `${statusEmoji} **URL 运行状态通知** ${statusEmoji}
+    return `${statusEmoji} *URL 运行状态通知* ${statusEmoji}
 
-**任务名称**：${result.taskName}
-**监控地址**：\`${result.taskId}\`
-**运行状态**：${statusEmoji} ${statusText}
-**响应时间**：${result.responseTime}ms${errorSection}
+*任务名称*：${result.taskName}
+*监控地址*：\`${result.taskId}\`
+*运行状态*：${statusEmoji} ${statusText}
+*响应时间*：${result.responseTime}ms${errorSection}
 
-⏱ **发生时间**：${formatTimestamp(Date.now())}`;
+⏱ *发生时间*：${formatTimestamp(Date.now())}`;
 }
 
 export async function sendTelegramNotification(result: CronResult): Promise<boolean> {

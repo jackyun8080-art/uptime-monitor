@@ -2,6 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { LogEntry } from "@/types";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface TaskStatus {
   id: string;
@@ -111,15 +117,7 @@ function UptimeRing({ percent }: { percent: number }) {
 
 function formatTime(ts: number | null): string {
   if (!ts) return "—";
-  return new Date(ts).toLocaleString("zh-CN", {
-    timeZone: "Asia/Shanghai",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  });
+  return dayjs(ts).tz("Asia/Shanghai").format("MM-DD HH:mm:ss");
 }
 
 export default function StatusPage() {
