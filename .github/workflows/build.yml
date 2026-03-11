@@ -5,6 +5,12 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build-and-pack:
     runs-on: ubuntu-latest
@@ -45,9 +51,11 @@ jobs:
           cd deploy_package
           zip -r ../uptime-monitor-release.zip ./*
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: uptime-monitor-release
-          path: uptime-monitor-release.zip
-          retention-days: 7
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="v1.0.${{ github.run_number }}"
+          gh release create "$TAG_NAME" uptime-monitor-release.zip \
+            --title "Release $TAG_NAME" \
+            --notes "由 GitHub Actions 自动生成的预构建包"

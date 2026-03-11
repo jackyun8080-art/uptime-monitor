@@ -15,9 +15,9 @@
 
 ### 方案 A: 本地或自建主机解压部署
 
-借助项目提供的 **GitHub Actions**，您可以直接下载预构件包在其他机器上极速启动：
+借助项目提供的 **GitHub Actions**，您可以直接在仓库发布的 Release 中下载预制包在其他机器上极速启动：
 
-1. 每次往 `main` 分支提交代码，GitHub Action 会自动构建并生成名为 `uptime-monitor-release.zip` 的 Artifact 包。
+1. 每次往 `main` 分支提交代码，GitHub Action 会自动构建生成，并在 GitHub 的 **Releases** 页面发布一份名为 `uptime-monitor-release.zip` 的压缩包。您可以回到仓库首页，点击右侧的 `Releases` 下载。
 2. 下载此 `zip` 文件并解压缩到您的服务器目录。
 3. 配置环境变量：在解压目录创建 `.env.local` 文件并填入如 KV 连接字串、Telegram Bot Token 等变量。
 4. 运行 `node server.js` 即可启动服务。如果需要保活，推荐使用 `pm2 start server.js --name uptime-monitor`。
